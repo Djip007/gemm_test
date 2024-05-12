@@ -20,6 +20,10 @@ compute C(m,n)=A(m,k)*B(k,n) with some "special" storage:
                           ~: A[m/M][k][M]   B[n/N][k][N]   C[m/M][n][M]  
 but "last" collone is store: A     [k][m%M] B     [k][n%N] C     [n][n%M]
 
+the kernel compute:   
+for (k=0; k<K; k++)
+    C[M,N] += A[M,k] * B[k,N]
+
 */
 
 #include "tools.hpp"
@@ -222,14 +226,14 @@ void sgemm_512(float* A, float* B, float* C, int m, int n, int k) {
 //#define MNK 256
 //#define ITERATIONS 10000
 //#define MNK 521
-//#define ITERATIONS 1000
-//#define MNK 1024
+#define ITERATIONS 1000
+#define MNK 1024
 //#define ITERATIONS 100
 //#define MNK 2048
 //#define ITERATIONS 10
 //#define MNK 4096
-#define ITERATIONS 2
-#define MNK 8192
+//#define ITERATIONS 2
+//#define MNK 8192
 
 MKL_INT m = MNK;
 MKL_INT n = MNK;
