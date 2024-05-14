@@ -224,10 +224,10 @@ void sgemm_512(float* A, float* B, float* C, int m, int n, int k) {
 //#define MNK 128
 //#define ITERATIONS 100000
 //#define MNK 256
-//#define ITERATIONS 10000
-//#define MNK 521
-#define ITERATIONS 1000
-#define MNK 1024
+#define ITERATIONS 10000
+#define MNK 512
+//#define ITERATIONS 1000
+//#define MNK 1024
 //#define ITERATIONS 100
 //#define MNK 2048
 //#define ITERATIONS 10
@@ -239,23 +239,28 @@ MKL_INT m = MNK;
 MKL_INT n = MNK;
 MKL_INT k = MNK;
 
-float *A, *B, *C;
+float *A[ITERATIONS], *B, *C;
 
+template<int I>
 void multiply() {
-    sgemm_512(A, B, C, m, n, k);
+    for (int i=0; i<I; i++) {
+        sgemm_512(A[i], B, C, m, n, k);
+    }
     volatile float x = C[0];
     (void)x;
 }
 
 int main() {
-    A = new_test_matrix<float>(m, k);
+    for (int i=0; i<ITERATIONS; i++) {
+        A[i] = new_test_matrix<float>(m, k);
+    }
     B = new_test_matrix<float>(n, k);
     C = new_test_matrix<float>(n, m);
-    multiply(); // cold start
+    multiply<1>();
     control(n,m,C,(float)k);
     printf("gemm<%d,%d,%d>\n", m,n,k);
     for (int nb=0; nb<5; nb++) {
-        BENCH(multiply());
+        BENCH(multiply<ITERATIONS>());
     }
 }
 

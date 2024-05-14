@@ -17,6 +17,8 @@ for (k=0; k<K; k++)
     C[1:M,1:N] += A[1:M,k]*B[k,1:N]
 ```
 
+Ryzen 7940HS => ~1000 GFlops
+
 ## gemm_AVX512_bf16_00.cpp
 compute C=A*B with kernel on block C[M,N] ([5,5]...) with bfloat_16
 ```c++
@@ -25,5 +27,19 @@ for (k=0; k<K; k+=32)
 ```
 
 A/B/C can be bfloat_16 or float_32.
+
+Ryzen 7940HS => ~1200 GFlops with fp32
+Ryzen 7940HS => ~1600 GFlops with bf16
+
+## gemm_RDNA3_bf16_00.cpp
+use RDNA3 eGPU on AMD APU (not dGPU!!!)
+and wmma instuction that release micro kernel of size:
+```
+C[16,16] += A[16,16]*B[16,16]
+```
+Ryzen 7940HS => 
+M=N=K= 256  => ~1600 GFlops
+M=N=K= 512  => ~3500 GFlops
+M=N=K=1024  => ~6600 GFlops
 
 

@@ -272,45 +272,46 @@ void sgemm_512(TA* A, TB* B, TC* C, int m, int n, int k) {
     }
 }
 
-#ifndef MKL_INT
-#define MKL_INT int
-#endif
-
 //#define ITERATIONS 100000
-//MKL_INT m = 255;
-//MKL_INT n = 255;
-//MKL_INT k = 256;
+//int m = 255;
+//int n = 255;
+//int k = 256;
 
-//#define ITERATIONS 10000
-//MKL_INT m = 510;
-//MKL_INT n = 510;
-//MKL_INT k = 512;
+#define ITERATIONS 10000
+int m = 510;
+int n = 510;
+int k = 512;
 
-#define ITERATIONS 1000
-MKL_INT m = 1000;
-MKL_INT n = 1000;
-MKL_INT k = 1024;
+//#define ITERATIONS 1000
+//int m = 1000;
+//int n = 1000;
+//int k = 1024;
 
 using type_t = bf16_t;
 //using type_t = fp32_t;
 
-type_t *A, *B, *C;
+type_t *A[ITERATIONS], *B, *C;
 
+template<int I>
 void multiply() {
-    sgemm_512(A, B, C, m, n, k);
+    for (int i=0; i<I; i++) {
+        sgemm_512(A[i], B, C, m, n, k);
+    }
     volatile type_t x = C[0];
     (void)x;
 }
 
 int main() {
-    A = new_test_matrix<type_t>(m, k);
+    for (int i=0; i<ITERATIONS; i++) {
+        A[i] = new_test_matrix<type_t>(m, k);
+    }
     B = new_test_matrix<type_t>(n, k);
     C = new_test_matrix<type_t>(m, n);
-    multiply(); // cold start
+    multiply<1>();
     //control(m,n,C,(float)k);
     printf("gemm<%d,%d,%d>\n", m,n,k);
     for (int nb=0; nb<5; nb++) {
-        BENCH(multiply());
+        BENCH(multiply<ITERATIONS>());
     }
 }
 

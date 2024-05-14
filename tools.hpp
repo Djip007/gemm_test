@@ -71,15 +71,25 @@ struct mesure {
 
 #define BENCH(x) \
     do { \
-        x; \
         mesure time; time.start(); \
-        for (long long i = 0; i < ITERATIONS; ++i) { \
-            asm volatile("" ::: "memory"); \
-            x; \
-            asm volatile("" ::: "memory"); \
-        } \
+        asm volatile("" ::: "memory"); \
+        x; \
+        asm volatile("" ::: "memory"); \
         auto dt = time.end(); \
         printf("%g us %s %g gigaflops\n", (dt/ITERATIONS)*1000000, #x, (1e-9*2*m*n*k*ITERATIONS)/dt); \
     } while (0)
 
+
+#define HIP_CHECK_ERROR(flag)                                                      \
+    do                                                                             \
+    {                                                                              \
+        hipError_t _tmpVal;                                                        \
+        if((_tmpVal = flag) != hipSuccess)                                         \
+        {                                                                          \
+            std::ostringstream ostr;                                               \
+            ostr << "HIP Function Failed (" << __FILE__ << "," << __LINE__ << ") " \
+                 << hipGetErrorString(_tmpVal);                                    \
+            throw std::runtime_error(ostr.str());                                  \
+        }                                                                          \
+    } while(0)
 
