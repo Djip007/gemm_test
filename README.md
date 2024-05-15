@@ -34,7 +34,7 @@ for (k=0; k<K; k++)
 ```
 
 Ryzen 7940HS => 
-- M=N=K= 256  => ~ 780 GFlops
+- M=N=K= 128  => ~ 780 GFlops
 - M=N=K= 256  => ~1000 GFlops
 - M=N=K= 512  => ~1090 GFlops
 - M=N=K=1024  => ~1100 GFlops
