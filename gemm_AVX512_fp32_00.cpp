@@ -213,14 +213,11 @@ void sgemm_512(float* A, float* B, float* C, int m, int n, int k) {
 }
 
 ////////////////////////////////////////////////////////////////
-#ifndef MKL_INT
-#define MKL_INT int
-#endif
-
 //#define ITERATIONS 1000000
 //#define MNK 16
 //#define MNK 32
 //#define MNK 64
+//#define ITERATIONS 100000
 //#define MNK 128
 //#define ITERATIONS 100000
 //#define MNK 256
@@ -235,9 +232,9 @@ void sgemm_512(float* A, float* B, float* C, int m, int n, int k) {
 //#define ITERATIONS 2
 //#define MNK 8192
 
-MKL_INT m = MNK;
-MKL_INT n = MNK;
-MKL_INT k = MNK;
+int m = MNK;
+int n = MNK;
+int k = MNK;
 
 float *A[ITERATIONS], *B, *C;
 
